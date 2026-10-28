@@ -77,7 +77,8 @@ private fun renderSplash(w: Int, h: Int, text: String, rgb: IntArray): ByteArray
 private fun pngDimensions(f: File): Pair<Int,Int>? = try { val b=f.readBytes(); if(b.size<24 || b[0]!=0x89.toByte() || b[1]!=80.toByte() || b[2]!=78.toByte() || b[3]!=71.toByte()) null else Pair(((b[16].toInt() and 255) shl 24) or ((b[17].toInt() and 255) shl 16) or ((b[18].toInt() and 255) shl 8) or (b[19].toInt() and 255),((b[20].toInt() and 255) shl 24) or ((b[21].toInt() and 255) shl 16) or ((b[22].toInt() and 255) shl 8) or (b[23].toInt() and 255)) } catch(_:Exception){null}
 
 @Suppress("unused")
-val customAppNamePatch = resourcePatch(name="Custom app name", description="Changes the launcher label.") {\n    compatibleWith(instagramCompatibility)
+val customAppNamePatch = resourcePatch(name="Custom app name", description="Changes the launcher label.") {
+    compatibleWith(instagramCompatibility)
     val style by stringOption(key="appNameStyle", default="Instagram PRO 👑", values=mapOf("Instagram PRO 👑" to "Instagram PRO 👑","InstagramPRO👑" to "InstagramPRO👑","Custom name" to "custom"), title="App name", required=true)
     val custom by stringOption(key="customAppName", default="", title="Custom app name", required=false)
     execute {
@@ -92,7 +93,8 @@ val customAppNamePatch = resourcePatch(name="Custom app name", description="Chan
 }
 
 @Suppress("unused")
-val customAppIconPatch = resourcePatch(name="Custom app icon", description="Replaces launcher icon image resources with a PNG you select.") {\n    compatibleWith(instagramCompatibility)
+val customAppIconPatch = resourcePatch(name="Custom app icon", description="Replaces launcher icon image resources with a PNG you select.") {
+    compatibleWith(instagramCompatibility)
     val path by stringOption(key="iconPath", default="", title="Icon PNG file", description="PNG path on the patching device; e.g. /storage/emulated/0/Download/icon.png. Leave blank to keep icons.", required=false)
     execute {
         val p=path?.trim().orEmpty(); if(p.isEmpty()) return@execute
@@ -104,7 +106,8 @@ val customAppIconPatch = resourcePatch(name="Custom app icon", description="Repl
 }
 
 @Suppress("unused")
-val customSplashTextPatch = resourcePatch(name="Custom splash text", description="Keep, replace or hide the splash screen branding text.") {\n    compatibleWith(instagramCompatibility)
+val customSplashTextPatch = resourcePatch(name="Custom splash text", description="Keep, replace or hide the splash screen branding text.") {
+    compatibleWith(instagramCompatibility)
     val mode by stringOption(key="splashMode", default="keep", values=mapOf("Keep original" to "keep","Custom text" to "custom","Hide" to "hide"), title="From Meta branding", required=true)
     val text by stringOption(key="splashText", default="Instagram PRO", title="Splash text (ASCII)", required=false)
     val tint by stringOption(key="splashTextColor", default="#FFD700", title="Splash text color", description="Color name or #RRGGBB.", required=false)
