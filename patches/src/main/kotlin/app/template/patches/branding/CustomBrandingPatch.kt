@@ -98,7 +98,18 @@ val customAppIconPatch = resourcePatch(name="Custom app icon", description="Repl
     val path by stringOption(key="iconPath", default="", title="Icon PNG file", description="PNG path on the patching device; e.g. /storage/emulated/0/Download/icon.png. Leave blank to keep icons.", required=false)
     execute {
         val p=path?.trim().orEmpty(); if(p.isEmpty()) return@execute
-        val f=File(p); check(f.isFile){"Icon PNG not found: $p"}; val b=f.readBytes(); check(b.size>24 && b[0]==0x89.toByte() && b[1]==80.toByte() && b[2]==78.toByte() && b[3]==71.toByte()){"Icon must be a PNG"}
+        val supplied=File(p)
+        val f=when {
+            supplied.isFile -> supplied
+            supplied.isDirectory -> {
+                val pngs=supplied.listFiles()?.filter { it.isFile && it.extension.equals("png", ignoreCase=true) }.orEmpty()
+                    .sortedBy { if(it.name.equals("icon.png", ignoreCase=true)) 0 else 1 }
+                pngs.firstOrNull() ?: error("No PNG icon found in folder: $p. Put a .png file in this folder or enter the full PNG file path.")
+            }
+            else -> error("Icon path does not exist: $p. Enter a full .png file path or a folder containing a PNG.")
+        }
+        val b=f.readBytes()
+        check(b.size>24 && b[0]==0x89.toByte() && b[1]==80.toByte() && b[2]==78.toByte() && b[3]==71.toByte()){"Selected icon is not a valid PNG: ${f.absolutePath}"}
         var n=0; val res=get("res")
         res.walkTopDown().filter{it.isFile && it.extension=="png" && it.nameWithoutExtension in setOf("ig_launcher_foreground","ig_launcher_background","instagram")}.forEach{it.writeBytes(b);n++}
         check(n>0){"No known launcher icon PNG resources found in this APK"}
