@@ -58,7 +58,7 @@ jobs:
           }
           with open("patches-bundle.json","w",encoding="utf-8") as f:
             json.dump(data,f,ensure_ascii=False,indent=2)
-            f.write("\\n")
+            f.write("\n")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
